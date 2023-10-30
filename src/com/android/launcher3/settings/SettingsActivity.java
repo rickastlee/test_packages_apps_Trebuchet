@@ -27,10 +27,13 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.om.OverlayManager;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.UserHandle;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
@@ -81,6 +84,14 @@ public class SettingsActivity extends FragmentActivity
     private static final String KEY_MINUS_ONE = "pref_enable_minus_one";
     private static final String SEARCH_PACKAGE = "com.google.android.googlequicksearchbox";
 
+    public static final String KEY_ALLOW_WALLPAPER_ZOOM = "pref_allow_wallpaper_zoom";
+
+    static final String OVERLAY_WALLPAPER_ZOOM_DISABLER =
+            "org.lineage.overlay.systemui.wpzoomdisabler";
+    private OverlayManager mOverlayManager;
+    private static final String TAG = "TrebuchetSettingsActivity";
+    private static final boolean DEBUG = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,7 +114,25 @@ public class SettingsActivity extends FragmentActivity
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) { }
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key == KEY_ALLOW_WALLPAPER_ZOOM) {
+            boolean isEnabled = !sharedPreferences.getBoolean(KEY_ALLOW_WALLPAPER_ZOOM, true);
+            applyWallpaperZoomDisabler(isEnabled);
+        }
+    }
+
+    private void applyWallpaperZoomDisabler(boolean state) {
+        UserHandle userId = UserHandle.of(ActivityManager.getCurrentUser());
+        try {
+            mOverlayManager.setEnabled(OVERLAY_WALLPAPER_ZOOM_DISABLER, state, userId);
+            if (DEBUG) {
+                Log.d(TAG, "applyWallpaperZoomDisabler: overlayPackage = "
+                        + OVERLAY_WALLPAPER_ZOOM_DISABLER + ", userId = " + userId);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to " + (state ? "enable" : "disable")
+                    + " overlay " + OVERLAY_WALLPAPER_ZOOM_DISABLER + " for user " + userId);
+        }
 
     private boolean startFragment(String fragment, Bundle args, String key) {
         if (Utilities.ATLEAST_P && getSupportFragmentManager().isStateSaved()) {

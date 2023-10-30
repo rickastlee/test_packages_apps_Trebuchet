@@ -55,4 +55,8 @@
     <string name="icon_pack_default_label">Default</string>
     <string name="icon_pack_add">Install more</string>
     <string name="icon_pack_no_market">There\'s no available app store</string>
+    
+    <!-- Wallpaper zoom -->
+    <string name="enable_wallpaper_zoom_title">Enable wallpaper zooming</string>
+    <string name="enable_wallpaper_zoom_summary">Adds a sense of depth to the home screen. When disabled, wallpapers will be displayed in the original resolution</string>
 </resources>
