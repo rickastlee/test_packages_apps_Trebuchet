@@ -133,6 +133,7 @@ public class SettingsActivity extends FragmentActivity
             Log.e(TAG, "Failed to " + (state ? "enable" : "disable")
                     + " overlay " + OVERLAY_WALLPAPER_ZOOM_DISABLER + " for user " + userId);
         }
+    }
 
     private boolean startFragment(String fragment, Bundle args, String key) {
         if (Utilities.ATLEAST_P && getSupportFragmentManager().isStateSaved()) {
